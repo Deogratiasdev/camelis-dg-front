@@ -3,61 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logs d'authentification - Security Web</title>
+    <title>Logs d'authentification — Security Web</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .main-content{min-height:100vh;background:var(--bg)}
-        .page-header{padding:2rem 1.5rem;max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem}
-        .header-left{flex:1}
-        .header-right{display:flex;align-items:center;gap:1rem}
-        .page-header h1{font-size:1.75rem;margin-bottom:0.5rem}
-        .page-header p{color:var(--text-soft);font-size:0.95rem}
-        .user-badge{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:var(--bg-card);border-radius:var(--radius);font-size:0.85rem;color:var(--text-soft)}
+        .main-content{min-height:100vh;background:transparent;position:relative;z-index:2}
+        .security-bg{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:1;overflow:hidden;background:var(--bg)}
+        .security-icon{position:absolute;opacity:0.08;color:var(--blue-600);animation:float 20s infinite ease-in-out}
+        .security-icon:nth-child(1){top:10%;left:5%;font-size:4rem;animation-delay:0s}
+        .security-icon:nth-child(2){top:20%;right:10%;font-size:3rem;animation-delay:3s}
+        .security-icon:nth-child(3){top:40%;left:15%;font-size:5rem;animation-delay:6s}
+        .security-icon:nth-child(4){top:60%;right:5%;font-size:3.5rem;animation-delay:9s}
+        .security-icon:nth-child(5){top:75%;left:8%;font-size:4.5rem;animation-delay:12s}
+        .security-icon:nth-child(6){top:30%;left:50%;font-size:2.5rem;animation-delay:15s}
+        .security-icon:nth-child(7){top:85%;right:20%;font-size:3rem;animation-delay:18s}
+        .security-icon:nth-child(8){top:50%;left:80%;font-size:4rem;animation-delay:5s}
+        @keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-20px) rotate(5deg)}25%{transform:translateX(10px) rotate(-3deg)}75%{transform:translateX(-10px) rotate(3deg)}}
+        .page-header{padding:1.75rem 1.5rem 1.25rem;max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;position:relative;z-index:2}
+        .header-left{flex:1;min-width:0}
+        .header-right{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
+        .page-chip{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.72rem;font-weight:700;color:var(--blue-600);text-transform:uppercase;letter-spacing:0.1em;background:var(--blue-50);padding:0.3rem 0.75rem;border-radius:20px;margin-bottom:0.5rem}
+        .page-chip::before{content:"";width:5px;height:5px;background:var(--blue-600);border-radius:50%}
+        .page-header h1{font-size:1.7rem;font-weight:800;margin-bottom:0.2rem;color:var(--text)}
+        .page-header .subtitle{color:var(--text-soft);font-size:0.9rem;margin:0}
+        .user-badge{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:#fff;border-radius:50px;font-size:0.85rem;color:var(--text-soft);font-weight:600;box-shadow:0 2px 10px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.05)}
         .user-badge i{color:var(--blue-600)}
         .logs-container{padding:0 1.5rem 2rem;max-width:1200px;margin:0 auto}
-        .filters{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
-        .filter-select{padding:0.5rem 1rem;border:1px solid var(--bg-soft);border-radius:var(--radius);background:var(--bg-card);font-size:0.9rem;min-width:150px}
-        .logs-table{width:100%;background:var(--bg-card);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
-        .logs-table th{background:var(--bg-soft);padding:1rem;text-align:left;font-size:0.85rem;font-weight:600;color:var(--text);border-bottom:1px solid var(--bg-soft)}
-        .logs-table td{padding:1rem;border-bottom:1px solid var(--bg-soft);font-size:0.85rem}
+        .filters{display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
+        .filter-select{padding:0.6rem 1rem;border:1px solid #e2e8f0;border-radius:12px;background:#fff;font-size:0.88rem;min-width:160px;box-shadow:0 2px 8px rgba(15,23,42,0.04);font-weight:500;transition:all 0.2s}
+        .filter-select:focus{outline:none;border-color:var(--blue-400);box-shadow:0 0 0 3px var(--blue-50)}
+        .logs-table-wrap{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 8px 30px rgba(15,23,42,0.06);border:1px solid rgba(0,0,0,0.04);position:relative;z-index:1}
+        .card-watermark{position:absolute;bottom:-20px;right:-20px;font-size:10rem;opacity:0.04;transform:rotate(-15deg);pointer-events:none;z-index:0;color:var(--blue-600)}
+        .logs-table{width:100%;border-collapse:collapse}
+        .logs-table th{background:#f8fafc;padding:1rem 1.1rem;text-align:left;font-size:0.78rem;font-weight:700;color:var(--text-soft);border-bottom:1px solid #e2e8f0;text-transform:uppercase;letter-spacing:0.05em}
+        .logs-table td{padding:1rem 1.1rem;border-bottom:1px solid rgba(0,0,0,0.04);font-size:0.88rem;color:var(--text)}
         .logs-table tr:last-child td{border-bottom:none}
-        .log-success{color:#22c55e}
-        .log-error{color:#ef4444}
-        .log-warning{color:#f59e0b}
-        .risk-low{background:#dcfce7;color:#166534;padding:0.25rem 0.5rem;border-radius:var(--radius);font-size:0.75rem}
-        .risk-medium{background:#fef3c7;color:#92400e;padding:0.25rem 0.5rem;border-radius:var(--radius);font-size:0.75rem}
-        .risk-high{background:#fee2e2;color:#991b1b;padding:0.25rem 0.5rem;border-radius:var(--radius);font-size:0.75rem}
+        .logs-table tbody tr:hover{background:#f8fafc}
+        .log-success{color:#16a34a;font-weight:600}
+        .log-error{color:#dc2626;font-weight:600}
+        .risk-low{background:#dcfce7;color:#166534;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600}
+        .risk-medium{background:#fef3c7;color:#92400e;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600}
+        .risk-high{background:#fee2e2;color:#991b1b;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.75rem;font-weight:600}
         .empty-state{text-align:center;padding:3rem;color:var(--text-soft)}
-        .empty-state i{font-size:3rem;margin-bottom:1rem;opacity:0.5}
-        @media(max-width:768px){
-            .page-header{flex-direction:column;align-items:flex-start}
-            .header-right{width:100%;justify-content:space-between}
-            .logs-table{display:block;overflow-x:auto}
-            .filters{flex-direction:column}
-            .filter-select{width:100%}
-        }
-        @media(max-width:600px){
-            .user-badge span{display:none}
-        }
+        .empty-state i{font-size:2.5rem;margin-bottom:1rem;opacity:0.4;display:block}
+        @media(max-width:768px){.page-header{flex-direction:column;padding:1.25rem 1rem}.header-right{width:100%;justify-content:space-between}.logs-table-wrap{overflow-x:auto}.filters{flex-direction:column;gap:0.6rem}.filter-select{width:100%}.logs-table th,.logs-table td{padding:0.75rem 0.75rem;font-size:0.8rem}}
+        @media(max-width:600px){.logs-container{padding:0 1rem 1.5rem}.user-badge span{display:inline}}
     </style>
 </head>
-<body>
+<body class="has-nav">
 
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-logo"><i class="fa-solid fa-shield-halved"></i> Security Web</div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link" id="nav-dashboard"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="auth-logs.html" class="nav-link active" id="nav-logs"><i class="fa-solid fa-clock-rotate-left"></i> Logs</a>
+                <a href="ai-analysis.html" class="nav-link" id="nav-ai"><i class="fa-solid fa-brain"></i> Analyse IA</a>
+                <a href="profile.html" class="nav-link" id="nav-profile"><i class="fa-solid fa-user-pen"></i> Profil</a>
+            </div>
+            <div class="nav-user" style="display:flex;align-items:center;gap:1rem;">
+                <span class="nav-email" id="navUserEmail"></span>
+                <button onclick="logout()" class="btn btn-ghost btn-sm" style="color:var(--red);"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="security-bg">
+        <i class="fa-solid fa-shield-halved security-icon"></i>
+        <i class="fa-solid fa-lock security-icon"></i>
+        <i class="fa-solid fa-key security-icon"></i>
+        <i class="fa-solid fa-fingerprint security-icon"></i>
+        <i class="fa-solid fa-user-shield security-icon"></i>
+        <i class="fa-solid fa-shield-virus security-icon"></i>
+        <i class="fa-solid fa-file-shield security-icon"></i>
+        <i class="fa-solid fa-server security-icon"></i>
+    </div>
     <main class="main-content">
         <div class="page-header">
             <div class="header-left">
-                <h1><i class="fa-solid fa-clock-rotate-left" style="color:var(--blue-600);"></i> Logs d'authentification</h1>
-                <p>Historique des tentatives de connexion et activités de sécurité</p>
+                <div class="page-chip">Sécurité</div>
+                <h1><i class="fa-solid fa-clock-rotate-left" style="color:var(--blue-600);font-size:1.4rem;"></i> Logs d'authentification</h1>
+                <p class="subtitle">Historique des tentatives de connexion et activités de sécurité</p>
             </div>
             <div class="header-right">
-                <div class="user-badge">
-                    <i class="fa-solid fa-user"></i>
-                    <span id="userEmail"></span>
-                </div>
+                <div class="user-badge"><i class="fa-solid fa-user"></i><span id="userEmail"></span></div>
                 <a href="dashboard.html" class="btn btn-ghost"><i class="fa-solid fa-arrow-left"></i> Retour</a>
-                <button onclick="logout()" class="btn btn-ghost" style="color:#dc2626;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Déconnexion</button>
+                <button onclick="logout()" class="btn btn-ghost" style="color:#dc2626;"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
             </div>
         </div>
 
@@ -75,154 +107,72 @@
                     <option value="false">Échecs</option>
                 </select>
                 <select class="filter-select" id="riskFilter" onchange="loadLogs()">
-                    <option value="">Tous les niveaux de risque</option>
+                    <option value="">Tous les niveaux</option>
                     <option value="low">Faible</option>
                     <option value="medium">Moyen</option>
                     <option value="high">Élevé</option>
                 </select>
             </div>
-
-            <div id="logsContent">
-                <div class="empty-state">
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>Chargement des logs...</p>
+            <div class="logs-table-wrap">
+                <i class="fa-solid fa-file-shield card-watermark"></i>
+                <div id="logsContent">
+                    <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Chargement des logs...</p></div>
                 </div>
             </div>
         </div>
     </main>
 
+    <nav class="bottom-nav">
+        <div class="bottom-nav-inner">
+            <a href="dashboard.html" class="bottom-nav-item" id="bnav-dashboard"><i class="fa-solid fa-house"></i><span>Accueil</span></a>
+            <a href="auth-logs.html" class="bottom-nav-item active" id="bnav-logs"><i class="fa-solid fa-clock-rotate-left"></i><span>Logs</span></a>
+            <a href="ai-analysis.html" class="bottom-nav-item" id="bnav-ai"><i class="fa-solid fa-brain"></i><span>IA</span></a>
+            <a href="profile.html" class="bottom-nav-item" id="bnav-profile"><i class="fa-solid fa-user"></i><span>Profil</span></a>
+            <a href="#" onclick="logout();return false;" class="bottom-nav-item" style="color:var(--red)"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Déco</span></a>
+        </div>
+    </nav>
+
     <script>
         const API_BASE = 'https://camelis-dg-back.onrender.com';
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        
-        if (!token) {
-            window.location.href = 'login.html';
-        }
-
+        if (!token) window.location.href = 'login.html';
         document.getElementById('userEmail').textContent = user.email || '';
-
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'login.html';
-        }
+        function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = 'login.html'; }
+        function confirmLogout() { if (confirm('Déconnecter ?')) logout(); }
 
         async function loadLogs() {
             const eventType = document.getElementById('eventTypeFilter').value;
             const success = document.getElementById('successFilter').value;
             const risk = document.getElementById('riskFilter').value;
             const content = document.getElementById('logsContent');
-
             try {
-                const response = await fetch(`${API_BASE}/auth/my-security`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erreur chargement logs');
-                }
-
-                const data = await response.json();
+                const res = await fetch(`${API_BASE}/auth/my-security`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!res.ok) throw new Error();
+                const data = await res.json();
                 let logs = data.activity?.logs || [];
-
-                // Filtrer
-                if (eventType) {
-                    logs = logs.filter(log => log.event_type === eventType);
-                }
-                if (success) {
-                    logs = logs.filter(log => log.success === (success === 'true'));
-                }
-                if (risk) {
-                    logs = logs.filter(log => log.risk_level === risk);
-                }
-
-                // Trier par date (plus récent en premier)
+                if (eventType) logs = logs.filter(l => l.event_type === eventType);
+                if (success) logs = logs.filter(l => l.success === (success === 'true'));
+                if (risk) logs = logs.filter(l => l.risk_level === risk);
                 logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-                if (logs.length === 0) {
-                    content.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fa-solid fa-folder-open"></i>
-                            <p>Aucun log trouvé pour les filtres sélectionnés</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = `
-                    <table class="logs-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Événement</th>
-                                <th>Détails</th>
-                                <th>IP</th>
-                                <th>Résultat</th>
-                                <th>Risque</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
+                if (!logs.length) { content.innerHTML = '<div class="empty-state"><i class="fa-solid fa-folder-open"></i><p>Aucun log trouvé</p></div>'; return; }
+                const labels = { login:'Connexion', register:'Inscription', verify_otp:'OTP', request_otp:'Demande OTP', update_profile:'Mise à jour' };
+                let html = `<table class="logs-table"><thead><tr><th>Date</th><th>Événement</th><th>Détails</th><th>IP</th><th>Résultat</th><th>Risque</th></tr></thead><tbody>`;
                 logs.forEach(log => {
                     const date = new Date(log.timestamp).toLocaleString('fr-FR');
-                    const riskClass = log.risk_level === 'low' ? 'risk-low' : 
-                                     log.risk_level === 'medium' ? 'risk-medium' : 'risk-high';
-                    const riskLabel = log.risk_level === 'low' ? 'Faible' : 
-                                    log.risk_level === 'medium' ? 'Moyen' : 'Élevé';
-                    const successClass = log.success ? 'log-success' : 'log-error';
-                    const successLabel = log.success ? '✓ Succès' : '✗ Échec';
-
-                    html += `
-                        <tr>
-                            <td>${date}</td>
-                            <td>${formatEventType(log.event_type)}</td>
-                            <td>${log.details || '-'}</td>
-                            <td>${log.ip_address || '-'}</td>
-                            <td class="${successClass}">${successLabel}</td>
-                            <td><span class="${riskClass}">${riskLabel}</span></td>
-                        </tr>
-                    `;
+                    const rc = log.risk_level === 'low' ? 'risk-low' : log.risk_level === 'medium' ? 'risk-medium' : 'risk-high';
+                    const rl = log.risk_level === 'low' ? 'Faible' : log.risk_level === 'medium' ? 'Moyen' : 'Élevé';
+                    const sc = log.success ? 'log-success' : 'log-error';
+                    const sl = log.success ? '✓ Succès' : '✗ Échec';
+                    html += `<tr><td>${date}</td><td>${labels[log.event_type]||log.event_type}</td><td>${log.details||'—'}</td><td>${log.ip_address||'—'}</td><td class="${sc}">${sl}</td><td><span class="${rc}">${rl}</span></td></tr>`;
                 });
-
                 html += '</tbody></table>';
                 content.innerHTML = html;
-
-            } catch (error) {
-                content.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <p>Erreur lors du chargement des logs</p>
-                    </div>
-                `;
+            } catch {
+                content.innerHTML = '<div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><p>Erreur lors du chargement</p></div>';
             }
         }
-
-        function formatEventType(type) {
-            const labels = {
-                'login': 'Connexion',
-                'register': 'Inscription',
-                'verify_otp': 'Vérification OTP',
-                'request_otp': 'Demande OTP',
-                'update_profile': 'Mise à jour profil'
-            };
-            return labels[type] || type;
-        }
-
-        // Charger au démarrage
         loadLogs();
-
-        // Deconnexion avec confirmation
-        function confirmLogout() {
-            if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-                logout();
-            }
-        }
     </script>
     <script src="js/nav.js"></script>
 </body>

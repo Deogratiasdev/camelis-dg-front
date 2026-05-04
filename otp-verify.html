@@ -28,16 +28,33 @@
             display:flex; align-items:center; justify-content:center;
             padding:3rem; background:var(--bg);
         }
-        .auth-box { width:100%; max-width:420px; }
-        .auth-box-header { text-align:center; margin-bottom:2rem; }
-        .auth-box-header i {
-            width:64px; height:64px; border-radius:var(--radius-lg);
-            background:var(--blue-50); color:var(--blue-600);
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.75rem; margin:0 auto 1rem;
+        .auth-box { 
+            width:100%; max-width:440px; 
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(0,0,0,0.04);
         }
-        .auth-box-header h1 { font-size:1.5rem; font-weight:700; margin-bottom:0.5rem; }
-        .auth-box-header p { color:var(--text-soft); font-size:0.9rem; }
+        .auth-box-header { text-align:center; margin-bottom:2rem; }
+        .auth-box-header .logo-mobile {
+            display: none;
+            align-items: center; justify-content: center; gap: 0.5rem;
+            font-weight: 800; font-size: 1.25rem; color: var(--blue-900);
+            margin-bottom: 1.5rem;
+        }
+        .auth-box-header .logo-mobile i {
+            font-size: 1.5rem; color: var(--blue-600);
+        }
+        .auth-box-header .icon-main {
+            width:64px; height:64px; border-radius:20px;
+            background:linear-gradient(135deg, var(--blue-50), var(--blue-100)); color:var(--blue-600);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.75rem; margin:0 auto 1.25rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+        .auth-box-header h1 { font-size:1.75rem; font-weight:800; margin-bottom:0.5rem; color: var(--blue-900); letter-spacing:-0.02em; }
+        .auth-box-header p { color:var(--text-soft); font-size:0.95rem; }
         .otp-inputs { display:flex; gap:0.75rem; justify-content:center; margin:2rem 0; }
         .otp-input {
             width:50px; height:60px;
@@ -88,12 +105,23 @@
             color:var(--text-xs);
             margin-top:0.5rem;
         }
-        .btn-submit { width:100%; }
+        .btn-submit { 
+            width:100%; padding:0.9rem; font-size:1rem; border-radius: 12px;
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-700));
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            color: #fff; display: flex; justify-content: center; align-items: center; gap: 0.5rem;
+            border: none; cursor: pointer; transition: all 0.2s ease; font-weight: 700;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35); }
         .alert { margin-bottom:1rem; }
         @media(max-width:900px) {
             .auth-split { grid-template-columns:1fr; }
             .auth-split-left { display:none; }
-            .auth-split-right { padding:2rem 1.5rem; min-height:100vh; }
+            .auth-split-right { padding:1.5rem; min-height:100vh; align-items:center; }
+            .auth-box { padding: 2rem 1.5rem; max-width:100%; border-radius: 20px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06); }
+            .auth-box-header .logo-mobile { display: flex; }
+            .auth-box-header h1 { font-size: 1.5rem; }
+            .auth-box-header .icon-main { width: 56px; height: 56px; font-size: 1.5rem; margin-bottom: 1rem; }
             .otp-input { width:45px; height:55px; font-size:1.25rem; }
         }
     </style>
@@ -115,14 +143,13 @@
 
         <!-- Right Panel -->
         <div class="auth-split-right">
-            <!-- Mobile Header -->
-            <div class="mobile-auth-header" style="display:none;">
-                <i class="fa-solid fa-shield-halved"></i>
-                <h2>Security Web</h2>
-            </div>
             <div class="auth-box">
                 <div class="auth-box-header">
-                    <i class="fa-solid fa-envelope-open-text"></i>
+                    <div class="logo-mobile">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Security Web
+                    </div>
+                    <i class="fa-solid fa-envelope-open-text icon-main"></i>
                     <h1>Code de vérification</h1>
                     <p>Saisissez le code à 6 chiffres envoyé à <strong id="userEmail">votre email</strong></p>
                 </div>

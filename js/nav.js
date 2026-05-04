@@ -6,15 +6,23 @@
 function injectNavigation() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     
-    const navItems = [
+    const desktopNavItems = [
         { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-line', label: 'Dashboard' },
-        { id: 'profile', href: 'profile.html', icon: 'fa-user', label: 'Profil' },
         { id: 'logs', href: 'auth-logs.html', icon: 'fa-clock-rotate-left', label: 'Logs' },
-        { id: 'ai', href: 'ai-analysis.html', icon: 'fa-brain', label: 'Analyse IA' }
+        { id: 'ai', href: 'ai-analysis.html', icon: 'fa-brain', label: 'Analyse IA' },
+        { id: 'profile', href: 'profile.html', icon: 'fa-user', label: 'Profil' }
+    ];
+
+    const mobileNavItems = [
+        { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-line', label: 'Dashboard' },
+        { id: 'logs', href: 'auth-logs.html', icon: 'fa-clock-rotate-left', label: 'Logs' },
+        { id: 'ai', href: 'ai-analysis.html', icon: 'fa-brain', label: 'Analyse IA' },
+        { id: 'profile', href: 'profile.html', icon: 'fa-user', label: 'Profil' }
     ];
     
     // Déterminer la page active
-    const activeId = navItems.find(item => currentPage.includes(item.href.replace('.html', '')))?.id || '';
+    const activeIdDesktop = desktopNavItems.find(item => currentPage.includes(item.href.replace('.html', '')))?.id || '';
+    const activeIdMobile = mobileNavItems.find(item => currentPage.includes(item.href.replace('.html', '')))?.id || '';
     
     // Navigation desktop (top)
     const desktopNav = document.createElement('nav');
@@ -26,8 +34,8 @@ function injectNavigation() {
                 <span>Security Web</span>
             </a>
             <div class="nav-links">
-                ${navItems.map(item => `
-                    <a href="${item.href}" class="nav-link ${activeId === item.id ? 'active' : ''}">
+                ${desktopNavItems.map(item => `
+                    <a href="${item.href}" class="nav-link ${activeIdDesktop === item.id ? 'active' : ''}">
                         <i class="fa-solid ${item.icon}"></i>
                         <span>${item.label}</span>
                     </a>
@@ -43,8 +51,8 @@ function injectNavigation() {
     const mobileNav = document.createElement('nav');
     mobileNav.className = 'nav-mobile';
     mobileNav.innerHTML = `
-        ${navItems.map(item => `
-            <a href="${item.href}" class="nav-item ${activeId === item.id ? 'active' : ''}">
+        ${mobileNavItems.map(item => `
+            <a href="${item.href}" class="nav-item ${activeIdMobile === item.id ? 'active' : ''}">
                 <i class="fa-solid ${item.icon}"></i>
                 <span>${item.label}</span>
             </a>

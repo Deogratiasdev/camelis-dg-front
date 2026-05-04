@@ -47,26 +47,58 @@
             display:flex; align-items:center; justify-content:center;
             padding:3rem; background:var(--bg);
         }
-        .auth-box { width:100%; max-width:420px; }
-        .auth-box-header { text-align:center; margin-bottom:1.5rem; }
-        .auth-box-header i {
-            width:64px; height:64px; border-radius:var(--radius-lg);
-            background:var(--blue-50); color:var(--blue-600);
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.75rem; margin:0 auto 1rem;
+        .auth-box { 
+            width:100%; max-width:440px; 
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(0,0,0,0.04);
         }
-        .auth-box-header h1 { font-size:1.5rem; font-weight:700; margin-bottom:0.5rem; }
-        .auth-box-header p { color:var(--text-soft); font-size:0.9rem; }
+        .auth-box-header { text-align:center; margin-bottom:1.5rem; }
+        .auth-box-header .logo-mobile {
+            display: none;
+            align-items: center; justify-content: center; gap: 0.5rem;
+            font-weight: 800; font-size: 1.25rem; color: var(--blue-900);
+            margin-bottom: 1.5rem;
+        }
+        .auth-box-header .logo-mobile i {
+            font-size: 1.5rem; color: var(--blue-600);
+        }
+        .auth-box-header .icon-main {
+            width:64px; height:64px; border-radius:20px;
+            background:linear-gradient(135deg, var(--blue-50), var(--blue-100)); color:var(--blue-600);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.75rem; margin:0 auto 1.25rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+        .auth-box-header h1 { font-size:1.75rem; font-weight:800; margin-bottom:0.5rem; color: var(--blue-900); letter-spacing:-0.02em; }
+        .auth-box-header p { color:var(--text-soft); font-size:0.95rem; }
         .auth-steps { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
         .auth-step { flex:1; height:4px; background:var(--bg-soft); border-radius:100px; transition:background var(--t); }
         .auth-step.active { background:var(--blue-600); }
         .auth-step.completed { background:var(--green); }
-        .auth-form-compact .form-group { margin-bottom:0.75rem; }
-        .auth-form-compact .form-label { font-size:0.8rem; margin-bottom:0.3rem; }
-        .auth-form-compact .form-input { padding:0.75rem 1rem 0.75rem 2.5rem; font-size:0.9rem; }
-        .auth-form-compact .input-wrap i { left:0.85rem; font-size:0.85rem; }
-        .auth-form-compact .btn-submit { padding:0.85rem; font-size:0.95rem; margin-top:0.5rem; }
-        .auth-form-compact .password-hint { font-size:0.75rem; color:var(--text-xs); margin-top:0.25rem; }
+        .auth-form-compact .form-group { margin-bottom:1.25rem; }
+        .auth-form-compact .form-label { font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:var(--text); }
+        .auth-form-compact .form-input { 
+            padding:0.85rem 1rem 0.85rem 2.8rem; font-size:0.95rem; 
+            border: 1px solid #e2e8f0; border-radius: 12px;
+            background: #f8fafc; transition: all 0.2s ease;
+        }
+        .auth-form-compact .form-input:focus {
+            background: #ffffff; border-color: var(--blue-400); box-shadow: 0 0 0 4px var(--blue-50);
+        }
+        .auth-form-compact .input-wrap > i { left:1rem; font-size:0.9rem; color:var(--text-xs); }
+        .auth-form-compact .btn-submit { 
+            padding:0.9rem; font-size:1rem; margin-top:0.5rem; border-radius: 12px;
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-700));
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+        .auth-form-compact .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+        }
+        .auth-form-compact .password-hint { font-size:0.75rem; color:var(--text-xs); margin-top:0.3rem; }
         .auth-form-compact .password-strength { height:4px; background:var(--bg-soft); border-radius:100px; margin-top:0.5rem; overflow:hidden; }
         .auth-form-compact .password-strength-bar { height:100%; width:0; transition:all 0.3s ease; border-radius:100px; }
         .auth-form-compact .password-strength-bar.weak { width:33%; background:var(--red); }
@@ -77,17 +109,27 @@
         @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
         .auth-nav-btns { display:flex; gap:0.75rem; margin-top:1rem; }
         .auth-nav-btns .btn { flex:1; }
-        .auth-nav-btns .btn-prev { background:var(--bg-soft); color:var(--text-soft); }
-        .auth-nav-btns .btn-prev:hover { background:var(--blue-100); }
-        .auth-divider { display:flex; align-items:center; gap:1rem; margin:1.25rem 0; color:var(--text-xs); font-size:0.8rem; }
+        .auth-nav-btns .btn-prev { background:var(--bg-soft); color:var(--text-soft); border-radius:12px; }
+        .auth-nav-btns .btn-prev:hover { background:var(--blue-100); color:var(--blue-700); }
+        .auth-divider { display:flex; align-items:center; gap:1rem; margin:1.25rem 0; color:var(--text-xs); font-size:0.8rem; text-transform:uppercase; font-weight:600; }
         .auth-divider::before, .auth-divider::after { content:''; flex:1; height:1px; background:var(--bg-soft); }
-        .auth-footer-box { text-align:center; margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--bg-soft); font-size:0.85rem; color:var(--text-soft); }
-        .auth-footer-box a { color:var(--blue-600); font-weight:600; }
+        .auth-footer-box { text-align:center; margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--bg-soft); font-size:0.9rem; color:var(--text-soft); }
+        .auth-footer-box a { color:var(--blue-600); font-weight:700; }
+        .btn-ghost-border { 
+            border: 1px solid #e2e8f0; border-radius: 12px; color: var(--text);
+            padding: 0.9rem; transition: all 0.2s ease; font-weight: 600;
+        }
+        .btn-ghost-border:hover {
+            background: var(--bg-soft); border-color: #cbd5e1;
+        }
         @media(max-width:900px) {
             .auth-split { grid-template-columns:1fr; }
             .auth-split-left { display:none; }
-            .auth-split-right { padding:2rem 1.5rem; min-height:100vh; align-items:flex-start; padding-top:2rem; }
-            .auth-box { max-width:100%; }
+            .auth-split-right { padding:1.5rem; min-height:100vh; align-items:center; }
+            .auth-box { padding: 2rem 1.5rem; max-width:100%; border-radius: 20px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06); }
+            .auth-box-header .logo-mobile { display: flex; }
+            .auth-box-header h1 { font-size: 1.5rem; }
+            .auth-box-header .icon-main { width: 56px; height: 56px; font-size: 1.5rem; margin-bottom: 1rem; }
         }
     </style>
 </head>
@@ -140,14 +182,13 @@
 
         <!-- Right Panel -->
         <div class="auth-split-right">
-            <!-- Mobile Header -->
-            <div class="mobile-auth-header" style="display:none;">
-                <i class="fa-solid fa-shield-halved"></i>
-                <h2>Security Web</h2>
-            </div>
             <div class="auth-box">
                 <div class="auth-box-header">
-                    <i class="fa-solid fa-user-plus"></i>
+                    <div class="logo-mobile">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Security Web
+                    </div>
+                    <i class="fa-solid fa-user-plus icon-main"></i>
                     <h1>Créer votre compte</h1>
                     <p>Rejoignez Security Web en 2 étapes</p>
                 </div>
@@ -230,7 +271,7 @@
 
                 <div class="auth-divider">ou</div>
 
-                <a href="login.html" class="btn btn-ghost" style="width:100%;justify-content:center;">
+                <a href="login.html" class="btn btn-ghost-border" style="width:100%;justify-content:center;">
                     <i class="fa-solid fa-arrow-right-to-bracket"></i>
                     J'ai déjà un compte
                 </a>

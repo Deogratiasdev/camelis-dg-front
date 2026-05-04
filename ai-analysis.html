@@ -3,59 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analyse IA - Security Web</title>
+    <title>Analyse IA — Security Web</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .main-content{min-height:100vh;background:var(--bg)}
-        .page-header{padding:2rem 1.5rem;max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem}
-        .header-left{flex:1}
-        .header-right{display:flex;align-items:center;gap:1rem}
-        .page-header h1{font-size:1.75rem;margin-bottom:0.5rem}
-        .page-header p{color:var(--text-soft);font-size:0.95rem}
-        .user-badge{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:var(--bg-card);border-radius:var(--radius);font-size:0.85rem;color:var(--text-soft)}
+        .main-content{min-height:100vh;background:transparent;position:relative;z-index:2}
+        .security-bg{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:1;overflow:hidden;background:var(--bg)}
+        .security-icon{position:absolute;opacity:0.08;color:var(--blue-600);animation:float 20s infinite ease-in-out}
+        .security-icon:nth-child(1){top:10%;left:5%;font-size:4rem;animation-delay:0s}
+        .security-icon:nth-child(2){top:20%;right:10%;font-size:3rem;animation-delay:3s}
+        .security-icon:nth-child(3){top:40%;left:15%;font-size:5rem;animation-delay:6s}
+        .security-icon:nth-child(4){top:60%;right:5%;font-size:3.5rem;animation-delay:9s}
+        .security-icon:nth-child(5){top:75%;left:8%;font-size:4.5rem;animation-delay:12s}
+        .security-icon:nth-child(6){top:30%;left:50%;font-size:2.5rem;animation-delay:15s}
+        .security-icon:nth-child(7){top:85%;right:20%;font-size:3rem;animation-delay:18s}
+        .security-icon:nth-child(8){top:50%;left:80%;font-size:4rem;animation-delay:5s}
+        @keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-20px) rotate(5deg)}25%{transform:translateX(10px) rotate(-3deg)}75%{transform:translateX(-10px) rotate(3deg)}}
+        .page-header{padding:1.75rem 1.5rem 1.25rem;max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;position:relative;z-index:2}
+        .header-left{flex:1;min-width:0}
+        .header-right{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
+        .page-chip{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.72rem;font-weight:700;color:var(--blue-600);text-transform:uppercase;letter-spacing:0.1em;background:var(--blue-50);padding:0.3rem 0.75rem;border-radius:20px;margin-bottom:0.5rem}
+        .page-chip::before{content:"";width:5px;height:5px;background:var(--blue-600);border-radius:50%}
+        .page-header h1{font-size:1.7rem;font-weight:800;margin-bottom:0.2rem;color:var(--text)}
+        .page-header .subtitle{color:var(--text-soft);font-size:0.9rem;margin:0}
+        .user-badge{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:#fff;border-radius:50px;font-size:0.85rem;color:var(--text-soft);font-weight:600;box-shadow:0 2px 10px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.05)}
         .user-badge i{color:var(--blue-600)}
         .analysis-container{padding:0 1.5rem 2rem;max-width:1200px;margin:0 auto}
-        .analysis-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-bottom:2rem}
-        .analysis-card{background:var(--bg-card);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow-sm)}
-        .analysis-card h3{font-size:1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
-        .analysis-card h3 i{color:var(--blue-600)}
-        .btn-analyze{width:100%;padding:0.75rem;background:var(--blue-600);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;font-weight:600;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:all 0.2s ease}
-        .btn-analyze:hover{background:var(--blue-700)}
-        .btn-analyze:disabled{background:var(--text-xs);cursor:not-allowed}
-        .results-area{padding:0}
-        .empty-state{text-align:center;padding:3rem;color:var(--text-soft)}
+        .analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:2rem}
+        .analysis-card{background:#fff;border-radius:20px;padding:1.5rem;box-shadow:0 4px 20px rgba(15,23,42,0.05);border:1px solid rgba(0,0,0,0.04);transition:all 0.25s ease;position:relative;overflow:hidden;z-index:1}
+        .card-watermark{position:absolute;bottom:-10px;right:-10px;font-size:4rem;opacity:0.04;transform:rotate(-15deg);pointer-events:none;z-index:0;color:var(--blue-600)}
+        .analysis-card::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue-500),var(--blue-600));transform:scaleX(0);transform-origin:left;transition:transform 0.3s ease;z-index:2}
+        .analysis-card:hover{box-shadow:0 12px 36px rgba(15,23,42,0.1);transform:translateY(-3px);border-color:var(--blue-200)}
+        .analysis-card:hover::after{transform:scaleX(1)}
+        .card-icon-wrap{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--blue-50),var(--blue-100));color:var(--blue-600);display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:1rem;box-shadow:0 4px 12px rgba(37,99,235,0.1)}
+        .analysis-card h3{font-size:1rem;font-weight:700;color:var(--blue-900);margin-bottom:0.4rem}
+        .analysis-card p{font-size:0.85rem;color:var(--text-soft);margin-bottom:1.25rem;line-height:1.5}
+        .btn-analyze{width:100%;padding:0.75rem;background:linear-gradient(135deg,var(--blue-600),var(--blue-700));color:#fff;border:none;border-radius:12px;cursor:pointer;font-weight:700;font-size:0.9rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:all 0.2s ease;box-shadow:0 4px 12px rgba(37,99,235,0.2)}
+        .btn-analyze:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(37,99,235,0.35)}
+        .btn-analyze:disabled{background:#94a3b8;cursor:not-allowed;box-shadow:none;transform:none}
+        .results-area{margin-top:0.5rem}
+        .result-card{background:#fff;border-radius:20px;padding:1.5rem;box-shadow:0 4px 20px rgba(15,23,42,0.05);border:1px solid rgba(0,0,0,0.04)}
+        .result-card-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(0,0,0,0.05)}
+        .result-card-header i{color:var(--blue-600);font-size:1.1rem}
+        .result-card-header h4{font-size:1rem;font-weight:700;color:var(--blue-900);margin:0}
+        .result-text{white-space:pre-wrap;line-height:1.7;color:var(--text);font-size:0.9rem}
+        .empty-state{text-align:center;padding:3rem 1rem;color:var(--text-soft);background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(15,23,42,0.05);border:1px solid rgba(0,0,0,0.04)}
+        .empty-state i{font-size:2.5rem;margin-bottom:1rem;opacity:0.4;display:block;color:var(--blue-400)}
+        .empty-state p{font-size:0.95rem;font-weight:500}
+        .spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:#fff;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
         .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:1rem}
         .modal.active{display:flex}
-        .modal-content{background:var(--bg-card);border-radius:var(--radius-lg);padding:1.5rem;max-width:500px;width:100%;max-height:80vh;overflow-y:auto}
-        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
-        .modal-header h3{font-size:1.1rem;margin:0}
-        .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-soft)}
-        .modal-body{white-space:pre-wrap;line-height:1.6;color:var(--text)}
-        @media(min-width:769px){
-            .modal{display:none}
-        }
-        .empty-state i{font-size:3rem;margin-bottom:1rem;opacity:0.5}
-        .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:#fff;animation:spin 1s linear infinite}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        @media(max-width:768px){
-            .page-header{flex-direction:column;align-items:flex-start}
-            .header-right{width:100%;justify-content:space-between}
-            .analysis-grid{grid-template-columns:1fr}
-        }
-        @media(max-width:600px){
-            .user-badge span{display:none}
-        }
+        .modal-content{background:#fff;border-radius:20px;padding:1.5rem;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(0,0,0,0.06)}
+        .modal-header h3{font-size:1.05rem;font-weight:700;margin:0;color:var(--blue-900)}
+        .modal-close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-soft);width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+        .modal-close:hover{background:var(--bg-soft)}
+        .modal-body{white-space:pre-wrap;line-height:1.7;color:var(--text);font-size:0.88rem}
+        @media(max-width:900px){.analysis-grid{grid-template-columns:1fr 1fr}}
+        @media(max-width:768px){.page-header{flex-direction:column;padding:1.25rem 1rem}.header-right{width:100%;justify-content:space-between}.analysis-grid{grid-template-columns:1fr}}
+        @media(max-width:600px){.analysis-container{padding:0 1rem 1.5rem}.user-badge span{display:inline}}
     </style>
 </head>
 <body class="has-nav">
 
     <nav class="nav">
         <div class="nav-inner">
-            <div class="nav-logo">
-                <i class="fa-solid fa-shield-halved"></i> Security Web
-            </div>
+            <div class="nav-logo"><i class="fa-solid fa-shield-halved"></i> Security Web</div>
             <div class="nav-links">
                 <a href="dashboard.html" class="nav-link" id="nav-dashboard"><i class="fa-solid fa-house"></i> Dashboard</a>
                 <a href="auth-logs.html" class="nav-link" id="nav-logs"><i class="fa-solid fa-clock-rotate-left"></i> Logs</a>
@@ -69,41 +84,55 @@
         </div>
     </nav>
 
+    <div class="security-bg">
+        <i class="fa-solid fa-shield-halved security-icon"></i>
+        <i class="fa-solid fa-lock security-icon"></i>
+        <i class="fa-solid fa-key security-icon"></i>
+        <i class="fa-solid fa-fingerprint security-icon"></i>
+        <i class="fa-solid fa-user-shield security-icon"></i>
+        <i class="fa-solid fa-shield-virus security-icon"></i>
+        <i class="fa-solid fa-file-shield security-icon"></i>
+        <i class="fa-solid fa-server security-icon"></i>
+    </div>
     <main class="main-content">
         <div class="page-header">
             <div class="header-left">
-                <h1><i class="fa-solid fa-brain" style="color:var(--blue-600);"></i> Analyse IA</h1>
-                <p>Détection d'anomalies et prédictions de menaces par intelligence artificielle</p>
+                <div class="page-chip">Intelligence Artificielle</div>
+                <h1><i class="fa-solid fa-brain" style="color:var(--blue-600);font-size:1.4rem;"></i> Analyse IA</h1>
+                <p class="subtitle">Détection d'anomalies et prédictions de menaces par intelligence artificielle</p>
             </div>
             <div class="header-right">
-                <div class="user-badge">
-                    <i class="fa-solid fa-user"></i>
-                    <span id="userEmail"></span>
-                </div>
+                <div class="user-badge"><i class="fa-solid fa-user"></i><span id="userEmail"></span></div>
                 <a href="dashboard.html" class="btn btn-ghost"><i class="fa-solid fa-arrow-left"></i> Retour</a>
-                <button onclick="logout()" class="btn btn-ghost" style="color:#dc2626;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Déconnexion</button>
+                <button onclick="logout()" class="btn btn-ghost" style="color:#dc2626;"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
             </div>
         </div>
 
         <div class="analysis-container">
             <div class="analysis-grid">
                 <div class="analysis-card">
-                    <h3><i class="fa-solid fa-chart-line"></i> Analyser les anomalies</h3>
-                    <p style="color:var(--text-soft);font-size:0.85rem;margin-bottom:1rem;">Détecte les comportements suspects dans vos activités récentes</p>
+                    <i class="fa-solid fa-magnifying-glass-chart card-watermark"></i>
+                    <div class="card-icon-wrap"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3>Analyser les anomalies</h3>
+                    <p>Détecte les comportements suspects dans vos activités récentes</p>
                     <button class="btn-analyze" onclick="analyzeAnomalies()" id="btnAnomalies">
                         <i class="fa-solid fa-magnifying-glass"></i> Analyser
                     </button>
                 </div>
                 <div class="analysis-card">
-                    <h3><i class="fa-solid fa-crystal-ball"></i> Prédire les menaces</h3>
-                    <p style="color:var(--text-soft);font-size:0.85rem;margin-bottom:1rem;">Prédit les risques potentiels basés sur vos patterns</p>
+                    <i class="fa-solid fa-shield-virus card-watermark"></i>
+                    <div class="card-icon-wrap"><i class="fa-solid fa-shield-virus"></i></div>
+                    <h3>Prédire les menaces</h3>
+                    <p>Prédit les risques potentiels basés sur vos patterns comportementaux</p>
                     <button class="btn-analyze" onclick="predictThreats()" id="btnThreats">
                         <i class="fa-solid fa-shield-virus"></i> Prédire
                     </button>
                 </div>
                 <div class="analysis-card">
-                    <h3><i class="fa-solid fa-lightbulb"></i> Recommandations</h3>
-                    <p style="color:var(--text-soft);font-size:0.85rem;margin-bottom:1rem;">Suggestions IA pour améliorer votre sécurité</p>
+                    <i class="fa-solid fa-wand-magic-sparkles card-watermark"></i>
+                    <div class="card-icon-wrap"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h3>Recommandations</h3>
+                    <p>Suggestions IA personnalisées pour améliorer votre niveau de sécurité</p>
                     <button class="btn-analyze" onclick="getRecommendations()" id="btnRecommendations">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> Obtenir
                     </button>
@@ -119,147 +148,11 @@
         </div>
     </main>
 
-    <script>
-        const API_BASE = 'https://camelis-dg-back.onrender.com';
-        const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        
-        if (!token) {
-            window.location.href = 'login.html';
-        }
-
-        document.getElementById('userEmail').textContent = user.email || '';
-
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'login.html';
-        }
-
-        async function analyzeAnomalies() {
-            await callAIEndpoint('/security/ai/analyze-anomalies', 'btnAnomalies', {
-                analysis_type: 'anomalies',
-                time_range: '24h',
-                filters: {}
-            });
-        }
-
-        async function predictThreats() {
-            await callAIEndpoint('/security/ai/predict-threats', 'btnThreats', {
-                analysis_type: 'threats',
-                time_range: '24h',
-                filters: {}
-            });
-        }
-
-        async function getRecommendations() {
-            await callAIEndpoint('/security/ai/recommendations', 'btnRecommendations', {
-                analysis_type: 'recommendations',
-                time_range: '24h',
-                filters: {}
-            });
-        }
-
-        async function callAIEndpoint(endpoint, btnId, body) {
-            const btn = document.getElementById(btnId);
-            const resultsArea = document.getElementById('resultsArea');
-            
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Analyse...';
-            
-            resultsArea.innerHTML = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>Analyse en cours...</p>
-                </div>
-            `;
-
-            try {
-                const response = await fetch(`${API_BASE}${endpoint}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                const data = await response.json();
-                console.log('Réponse backend:', data);
-
-                if (!response.ok) {
-                    throw new Error(data.detail || 'Erreur lors de l\'analyse');
-                }
-
-                displayResults(data);
-
-            } catch (error) {
-                resultsArea.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <p>${error.message}</p>
-                    </div>
-                `;
-            }
-
-            btn.disabled = false;
-            btn.innerHTML = btnId === 'btnAnomalies' ? '<i class="fa-solid fa-magnifying-glass"></i> Analyser' :
-                        btnId === 'btnThreats' ? '<i class="fa-solid fa-shield-virus"></i> Prédire' :
-                        '<i class="fa-solid fa-wand-magic-sparkles"></i> Obtenir';
-        }
-
-        function displayResults(data) {
-            const resultsArea = document.getElementById('resultsArea');
-            console.log('Données reçues pour affichage:', data);
-            
-            // Afficher directement le texte
-            let text = '';
-            if (typeof data === 'string') {
-                text = data;
-            } else if (data.analysis || data.result || data.message || data.response) {
-                text = data.analysis || data.result || data.message || data.response;
-            } else {
-                text = JSON.stringify(data, null, 2);
-            }
-            
-            resultsArea.innerHTML = `
-                <div style="background:var(--bg-card);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow-sm);margin-top:1.5rem;">
-                    <div style="white-space:pre-wrap;line-height:1.6;color:var(--text);">${text}</div>
-                </div>
-            `;
-            
-            // Sur mobile, afficher dans un modal
-            if (window.innerWidth <= 768) {
-                showModal(text);
-            }
-        }
-
-        function showModal(text) {
-            const modal = document.getElementById('resultModal');
-            const modalBody = document.getElementById('modalBody');
-            modalBody.textContent = text;
-            modal.classList.add('active');
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('resultModal');
-            modal.classList.remove('active');
-        }
-
-        // Deconnexion avec confirmation
-        function confirmLogout() {
-            if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-                logout();
-            }
-        }
-    </script>
-    <script src="js/nav.js"></script>
-    
     <div class="modal" id="resultModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Résultat de l'analyse</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <button class="modal-close" onclick="closeModal()">×</button>
             </div>
             <div class="modal-body" id="modalBody"></div>
         </div>
@@ -271,9 +164,58 @@
             <a href="auth-logs.html" class="bottom-nav-item" id="bnav-logs"><i class="fa-solid fa-clock-rotate-left"></i><span>Logs</span></a>
             <a href="ai-analysis.html" class="bottom-nav-item active" id="bnav-ai"><i class="fa-solid fa-brain"></i><span>IA</span></a>
             <a href="profile.html" class="bottom-nav-item" id="bnav-profile"><i class="fa-solid fa-user"></i><span>Profil</span></a>
-            <a href="#" onclick="confirmLogout();return false;" class="bottom-nav-item" style="color:var(--red)"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Déco</span></a>
+            <a href="#" onclick="logout();return false;" class="bottom-nav-item" style="color:var(--red)"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Déco</span></a>
         </div>
     </nav>
 
+    <script>
+        const API_BASE = 'https://camelis-dg-back.onrender.com';
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!token) window.location.href = 'login.html';
+        document.getElementById('userEmail').textContent = user.email || '';
+        function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = 'login.html'; }
+        function confirmLogout() { if (confirm('Déconnecter ?')) logout(); }
+        function closeModal() { document.getElementById('resultModal').classList.remove('active'); }
+
+        async function analyzeAnomalies() {
+            await callAI('/security/ai/analyze-anomalies', 'btnAnomalies', { analysis_type:'anomalies', time_range:'24h', filters:{} }, 'Anomalies détectées', 'fa-chart-line');
+        }
+        async function predictThreats() {
+            await callAI('/security/ai/predict-threats', 'btnThreats', { analysis_type:'threats', time_range:'24h', filters:{} }, 'Prédiction des menaces', 'fa-shield-virus');
+        }
+        async function getRecommendations() {
+            await callAI('/security/ai/recommendations', 'btnRecommendations', { analysis_type:'recommendations', time_range:'24h', filters:{} }, 'Recommandations IA', 'fa-wand-magic-sparkles');
+        }
+
+        async function callAI(endpoint, btnId, body, title, icon) {
+            const btn = document.getElementById(btnId);
+            const area = document.getElementById('resultsArea');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Analyse...';
+            area.innerHTML = '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Analyse en cours...</p></div>';
+            try {
+                const res = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || 'Erreur analyse');
+                const text = typeof data === 'string' ? data : (data.analysis || data.result || data.message || data.response || JSON.stringify(data, null, 2));
+                area.innerHTML = `<div class="result-card"><div class="result-card-header"><i class="fa-solid ${icon}"></i><h4>${title}</h4></div><div class="result-text">${text}</div></div>`;
+                if (window.innerWidth <= 768) {
+                    document.getElementById('modalBody').textContent = text;
+                    document.getElementById('resultModal').classList.add('active');
+                }
+            } catch (e) {
+                area.innerHTML = `<div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><p>${e.message}</p></div>`;
+            }
+            btn.disabled = false;
+            const labels = { btnAnomalies:'<i class="fa-solid fa-magnifying-glass"></i> Analyser', btnThreats:'<i class="fa-solid fa-shield-virus"></i> Prédire', btnRecommendations:'<i class="fa-solid fa-wand-magic-sparkles"></i> Obtenir' };
+            btn.innerHTML = labels[btnId];
+        }
+    </script>
+    <script src="js/nav.js"></script>
 </body>
 </html>
