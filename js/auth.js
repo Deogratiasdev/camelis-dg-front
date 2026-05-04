@@ -2,7 +2,7 @@
 // AUTHENTIFICATION - SecureAuth Frontend
 // ========================================
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://camelis-dg-back.onrender.com';
 
 // Stockage temporaire pour inscription
 let registerData = {

@@ -2,7 +2,7 @@
 // DASHBOARD - SecureAuth
 // ========================================
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://camelis-dg-back.onrender.com';
 
 // Verifier authentification
 const token = localStorage.getItem('token');

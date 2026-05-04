@@ -2,7 +2,7 @@
 // FONCTIONS COMMUNES - SecureAuth
 // ========================================
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://camelis-dg-back.onrender.com';
 
 // Fonction pour obtenir les informations utilisateur
 function getUserInfo() {
