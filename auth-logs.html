@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs d'authentification - Security Web</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .main-content{min-height:100vh;background:var(--bg)}
+        .page-header{padding:2rem 1.5rem;max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem}
+        .header-left{flex:1}
+        .header-right{display:flex;align-items:center;gap:1rem}
+        .page-header h1{font-size:1.75rem;margin-bottom:0.5rem}
+        .page-header p{color:var(--text-soft);font-size:0.95rem}
+        .user-badge{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:var(--bg-card);border-radius:var(--radius);font-size:0.85rem;color:var(--text-soft)}
+        .user-badge i{color:var(--blue-600)}
+        .logs-container{padding:0 1.5rem 2rem;max-width:1200px;margin:0 auto}
+        .filters{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+        .filter-select{padding:0.5rem 1rem;border:1px solid var(--bg-soft);border-radius:var(--radius);background:var(--bg-card);font-size:0.9rem;min-width:150px}
+        .logs-table{width:100%;background:var(--bg-card);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+        .logs-table th{background:var(--bg-soft);padding:1rem;text-align:left;font-size:0.85rem;font-weight:600;color:var(--text);border-bottom:1px solid var(--bg-soft)}
+        .logs-table td{padding:1rem;border-bottom:1px solid var(--bg-soft);font-size:0.85rem}
+        .logs-table tr:last-child td{border-bottom:none}
+        .log-success{color:#22c55e}
+        .log-error{color:#ef4444}
+        .log-warning{color:#f59e0b}
+        .risk-low{background:#dcfce7;color:#166534;padding:0.25rem 0.5rem;border-radius:var(--radius);font-size:0.75rem}
+        .risk-medium{background:#fef3c7;color:#92400e;padding:0.25rem 0.5rem;border-radius:var(--radius);font-size:0.75rem}
+        .risk-high{background:#fee2e2;color:#991b1b;padding:0.25rem 0.5rem;border-radius:var(--radius);font-size:0.75rem}
+        .empty-state{text-align:center;padding:3rem;color:var(--text-soft)}
+        .empty-state i{font-size:3rem;margin-bottom:1rem;opacity:0.5}
+        @media(max-width:768px){
+            .page-header{flex-direction:column;align-items:flex-start}
+            .header-right{width:100%;justify-content:space-between}
+            .logs-table{display:block;overflow-x:auto}
+            .filters{flex-direction:column}
+            .filter-select{width:100%}
+        }
+        @media(max-width:600px){
+            .user-badge span{display:none}
+        }
+    </style>
+</head>
+<body>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div class="header-left">
+                <h1><i class="fa-solid fa-clock-rotate-left" style="color:var(--blue-600);"></i> Logs d'authentification</h1>
+                <p>Historique des tentatives de connexion et activités de sécurité</p>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-user"></i>
+                    <span id="userEmail"></span>
+                </div>
+                <a href="dashboard.html" class="btn btn-ghost"><i class="fa-solid fa-arrow-left"></i> Retour</a>
+                <button onclick="logout()" class="btn btn-ghost" style="color:#dc2626;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Déconnexion</button>
+            </div>
+        </div>
+
+        <div class="logs-container">
+            <div class="filters">
+                <select class="filter-select" id="eventTypeFilter" onchange="loadLogs()">
+                    <option value="">Tous les événements</option>
+                    <option value="login">Connexions</option>
+                    <option value="register">Inscriptions</option>
+                    <option value="verify_otp">Vérifications OTP</option>
+                </select>
+                <select class="filter-select" id="successFilter" onchange="loadLogs()">
+                    <option value="">Tous les résultats</option>
+                    <option value="true">Succès</option>
+                    <option value="false">Échecs</option>
+                </select>
+                <select class="filter-select" id="riskFilter" onchange="loadLogs()">
+                    <option value="">Tous les niveaux de risque</option>
+                    <option value="low">Faible</option>
+                    <option value="medium">Moyen</option>
+                    <option value="high">Élevé</option>
+                </select>
+            </div>
+
+            <div id="logsContent">
+                <div class="empty-state">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>Chargement des logs...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('userEmail').textContent = user.email || '';
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        async function loadLogs() {
+            const eventType = document.getElementById('eventTypeFilter').value;
+            const success = document.getElementById('successFilter').value;
+            const risk = document.getElementById('riskFilter').value;
+            const content = document.getElementById('logsContent');
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/my-security`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur chargement logs');
+                }
+
+                const data = await response.json();
+                let logs = data.activity?.logs || [];
+
+                // Filtrer
+                if (eventType) {
+                    logs = logs.filter(log => log.event_type === eventType);
+                }
+                if (success) {
+                    logs = logs.filter(log => log.success === (success === 'true'));
+                }
+                if (risk) {
+                    logs = logs.filter(log => log.risk_level === risk);
+                }
+
+                // Trier par date (plus récent en premier)
+                logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                if (logs.length === 0) {
+                    content.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <p>Aucun log trouvé pour les filtres sélectionnés</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = `
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Événement</th>
+                                <th>Détails</th>
+                                <th>IP</th>
+                                <th>Résultat</th>
+                                <th>Risque</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                logs.forEach(log => {
+                    const date = new Date(log.timestamp).toLocaleString('fr-FR');
+                    const riskClass = log.risk_level === 'low' ? 'risk-low' : 
+                                     log.risk_level === 'medium' ? 'risk-medium' : 'risk-high';
+                    const riskLabel = log.risk_level === 'low' ? 'Faible' : 
+                                    log.risk_level === 'medium' ? 'Moyen' : 'Élevé';
+                    const successClass = log.success ? 'log-success' : 'log-error';
+                    const successLabel = log.success ? '✓ Succès' : '✗ Échec';
+
+                    html += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>${formatEventType(log.event_type)}</td>
+                            <td>${log.details || '-'}</td>
+                            <td>${log.ip_address || '-'}</td>
+                            <td class="${successClass}">${successLabel}</td>
+                            <td><span class="${riskClass}">${riskLabel}</span></td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                content.innerHTML = html;
+
+            } catch (error) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <p>Erreur lors du chargement des logs</p>
+                    </div>
+                `;
+            }
+        }
+
+        function formatEventType(type) {
+            const labels = {
+                'login': 'Connexion',
+                'register': 'Inscription',
+                'verify_otp': 'Vérification OTP',
+                'request_otp': 'Demande OTP',
+                'update_profile': 'Mise à jour profil'
+            };
+            return labels[type] || type;
+        }
+
+        // Charger au démarrage
+        loadLogs();
+
+        // Deconnexion avec confirmation
+        function confirmLogout() {
+            if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                logout();
+            }
+        }
+    </script>
+    <script src="js/nav.js"></script>
+</body>
+</html>

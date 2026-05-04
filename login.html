@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Security Web</title>
+    <meta name="description" content="Connectez-vous à Security Web - Authentification bancaire sécurisée">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .auth-split { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; }
+        .auth-split-left {
+            background:var(--blue-600); padding:3rem 4rem;
+            display:flex; flex-direction:column; justify-content:space-between;
+            position:relative; overflow:hidden; color:#fff;
+        }
+        .auth-split-left::before {
+            content:''; position:absolute; top:-100px; right:-100px;
+            width:300px; height:300px; border-radius:50%; background:rgba(255,255,255,0.08);
+        }
+        .auth-split-left::after {
+            content:''; position:absolute; bottom:-80px; left:-80px;
+            width:250px; height:250px; border-radius:50%; background:rgba(255,255,255,0.05);
+        }
+        .auth-split-logo { display:flex; align-items:center; gap:0.65rem; font-weight:800; font-size:1.25rem; position:relative; z-index:1; }
+        .auth-split-logo i { font-size:1.5rem; }
+        .auth-split-hero { position:relative; z-index:1; }
+        .auth-split-hero h2 { color:#fff; font-size:2.25rem; font-weight:800; margin-bottom:1rem; }
+        .auth-split-hero p { color:rgba(255,255,255,0.8); font-size:1.1rem; line-height:1.6; }
+        .auth-split-features { position:relative; z-index:1; }
+        .auth-split-feat { display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; }
+        .auth-split-feat i {
+            width:44px; height:44px; border-radius:var(--radius);
+            background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center;
+            font-size:1.1rem; flex-shrink:0;
+        }
+        .auth-split-feat div h4 { color:#fff; font-size:0.9rem; margin-bottom:0.2rem; }
+        .auth-split-feat div p { color:rgba(255,255,255,0.7); font-size:0.8rem; margin:0; }
+        .auth-split-stats {
+            display:flex; gap:3rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.15);
+            position:relative; z-index:1;
+        }
+        .auth-split-stat .num { font-size:1.75rem; font-weight:800; color:#fff; }
+        .auth-split-stat .lbl { font-size:0.75rem; color:rgba(255,255,255,0.65); }
+        .auth-split-right {
+            display:flex; align-items:center; justify-content:center;
+            padding:3rem; background:var(--bg);
+        }
+        .auth-box { width:100%; max-width:400px; }
+        .auth-box-header { text-align:center; margin-bottom:2rem; }
+        .auth-box-header i {
+            width:64px; height:64px; border-radius:var(--radius-lg);
+            background:var(--blue-50); color:var(--blue-600);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.75rem; margin:0 auto 1rem;
+        }
+        .auth-box-header h1 { font-size:1.5rem; font-weight:700; margin-bottom:0.5rem; }
+        .auth-box-header p { color:var(--text-soft); font-size:0.9rem; }
+        .auth-form-compact .form-group { margin-bottom:1rem; }
+        .auth-form-compact .form-label { font-size:0.8rem; margin-bottom:0.35rem; }
+        .auth-form-compact .form-input { padding:0.75rem 1rem 0.75rem 2.5rem; font-size:0.9rem; }
+        .auth-form-compact .input-wrap i { left:0.85rem; font-size:0.85rem; }
+        .auth-form-compact .btn-submit { padding:0.85rem; font-size:0.95rem; margin-top:0.5rem; }
+        .auth-links { display:flex; justify-content:space-between; align-items:center; margin-top:1rem; font-size:0.8rem; }
+        .auth-links a { color:var(--blue-600); font-weight:500; }
+        .auth-links a:hover { text-decoration:underline; }
+        .auth-divider { display:flex; align-items:center; gap:1rem; margin:1.5rem 0; color:var(--text-xs); font-size:0.8rem; }
+        .auth-divider::before, .auth-divider::after { content:''; flex:1; height:1px; background:var(--bg-soft); }
+        .auth-footer-box { text-align:center; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--bg-soft); font-size:0.85rem; color:var(--text-soft); }
+        .auth-footer-box a { color:var(--blue-600); font-weight:600; }
+        @media(max-width:900px) {
+            .auth-split { grid-template-columns:1fr; }
+            .auth-split-left { display:none; }
+            .auth-split-right { padding:2rem 1.5rem; min-height:100vh; align-items:flex-start; padding-top:3rem; }
+            .auth-box { max-width:100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-split">
+        <!-- Left Panel -->
+        <div class="auth-split-left">
+            <div class="auth-split-logo">
+                <i class="fa-solid fa-shield-halved"></i>
+                Security Web
+            </div>
+            <div class="auth-split-hero">
+                <h2>Authentification<br>intelligente</h2>
+                <p>Accédez à votre espace sécurisé avec MFA et analyse IA.</p>
+            </div>
+            <div class="auth-split-features">
+                <div class="auth-split-feat">
+                    <i class="fa-solid fa-key"></i>
+                    <div>
+                        <h4>MFA 2 couches</h4>
+                        <p>Mot de passe, OTP par email</p>
+                    </div>
+                </div>
+                <div class="auth-split-feat">
+                    <i class="fa-solid fa-brain"></i>
+                    <div>
+                        <h4>Analyse IA temps réel</h4>
+                        <p>Détection des anomalies instantanée</p>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-split-stats">
+                <div class="auth-split-stat">
+                    <div class="num">99.97%</div>
+                    <div class="lbl">Détection fraudes</div>
+                </div>
+                <div class="auth-split-stat">
+                    <div class="num">&lt; 2s</div>
+                    <div class="lbl">Authentification</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="auth-split-right">
+            <!-- Mobile Header -->
+            <div class="mobile-auth-header" style="display:none;">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h2>Security Web</h2>
+            </div>
+            <div class="auth-box">
+                <div class="auth-box-header">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    <h1>Connexion</h1>
+                    <p>Accédez à votre espace sécurisé</p>
+                </div>
+
+                <form class="auth-form-compact" id="loginForm">
+                    <div id="loginError" class="alert alert-error" style="display:none;"></div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" class="form-input" id="email" placeholder="jean.dupont@email.com" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Mot de passe</label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" class="form-input with-eye" id="password" placeholder="Votre mot de passe" required>
+                            <button type="button" class="password-toggle" id="togglePassword" aria-label="Afficher/masquer le mot de passe">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="auth-links">
+                        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;color:var(--text-soft);cursor:pointer;">
+                            <input type="checkbox" id="rememberMe" style="width:auto;"> Se souvenir de moi
+                        </label>
+                        <a href="#" onclick="showPasswordResetInfo();return false;">Mot de passe oublié ?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-submit" id="loginBtn">
+                        <span>Se connecter</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="auth-divider">ou</div>
+
+                <a href="register.html" class="btn btn-ghost" style="width:100%;justify-content:center;">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Créer un compte
+                </a>
+
+                <div class="auth-footer-box">
+                    Pas encore de compte ? <a href="register.html">S'inscrire</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Afficher info reinitialisation mot de passe
+        function showPasswordResetInfo() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Veuillez saisir votre adresse email dans le champ ci-dessus, puis cliquez a nouveau sur "Mot de passe oublie".\n\nUn lien de reinitialisation vous sera envoye.');
+                document.getElementById('email').focus();
+            } else {
+                alert('Un email de reinitialisation a ete envoye a ' + email + '.\n\nVeuillez verifier votre boite de reception et suivre les instructions.');
+            }
+        }
+
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    </script>
+</body>
+</html>

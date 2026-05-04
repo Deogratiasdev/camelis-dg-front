@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil — Security Web</title>
+    <meta name="description" content="Modifiez vos informations personnelles et paramètres de sécurité.">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .profile-layout{min-height:calc(100vh - 64px);background:var(--bg);padding:2rem 0}
+        .profile-container{max-width:1000px;margin:0 auto;padding:0 1.5rem;display:grid;grid-template-columns:320px 1fr;gap:2rem}
+        
+        /* Sidebar */
+        .profile-sidebar{display:flex;flex-direction:column;gap:1.25rem}
+        .profile-card{background:var(--bg-card);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow-sm);text-align:center}
+        .profile-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--blue-500),var(--blue-700));color:#fff;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;margin:0 auto 1rem}
+        .profile-name{font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:0.25rem}
+        .profile-email{font-size:0.85rem;color:var(--text-soft);word-break:break-all}
+        .profile-meta{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--bg-soft);font-size:0.8rem;color:var(--text-xs)}
+        
+        .sidebar-nav{background:var(--bg-card);border-radius:var(--radius-lg);padding:0.75rem;box-shadow:var(--shadow-sm)}
+        .sidebar-link{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;border-radius:var(--radius);color:var(--text-soft);font-size:0.9rem;font-weight:500;transition:all 0.2s;margin-bottom:0.25rem}
+        .sidebar-link:last-child{margin-bottom:0}
+        .sidebar-link:hover{background:var(--blue-50);color:var(--blue-600)}
+        .sidebar-link.active{background:var(--blue-50);color:var(--blue-600)}
+        .sidebar-link i{width:20px;text-align:center}
+        
+        /* Main Content */
+        .profile-main{background:var(--bg-card);border-radius:var(--radius-lg);padding:2rem;box-shadow:var(--shadow-sm)}
+        .profile-header{margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--bg-soft)}
+        .profile-header h1{font-size:1.4rem;font-weight:700;display:flex;align-items:center;gap:0.5rem}
+        .profile-header h1 i{color:var(--blue-600)}
+        .profile-header p{color:var(--text-soft);font-size:0.9rem;margin-top:0.25rem}
+        
+        .alert{padding:0.875rem 1rem;border-radius:var(--radius);font-size:0.85rem;margin-bottom:1.25rem}
+        .alert-error{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
+        .alert-success{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.3)}
+        
+        .form-group{margin-bottom:1.25rem}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        .form-label{display:block;font-size:0.8rem;font-weight:600;color:var(--text);margin-bottom:0.4rem}
+        .input-wrap{position:relative}
+        .input-wrap i{position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);color:var(--text-xs);font-size:0.9rem}
+        .form-input{width:100%;padding:0.75rem 0.875rem 0.75rem 2.5rem;border:1px solid var(--bg-soft);border-radius:var(--radius);background:var(--bg);font-size:0.9rem;transition:all 0.2s ease}
+        .form-input:focus{outline:none;border-color:var(--blue-600);box-shadow:0 0 0 3px var(--blue-50)}
+        .divider{border:none;border-top:1px solid var(--bg-soft);margin:1.5rem 0}
+        .section-title{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:1rem}
+        .btn-submit{width:100%;padding:0.875rem;border:none;border-radius:var(--radius);background:var(--blue-600);color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s ease;display:flex;align-items:center;justify-content:center;gap:0.5rem}
+        .btn-submit:hover{background:var(--blue-700)}
+        .btn-submit:disabled{background:var(--text-xs);cursor:not-allowed}
+        .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:#fff;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        
+        /* Mobile */
+        @media(max-width:900px){
+            .profile-layout{padding:1rem 0;padding-bottom:100px}
+            .profile-container{grid-template-columns:1fr;padding:0 1rem;gap:1rem}
+            .profile-sidebar{display:none}
+            .profile-main{padding:1.25rem}
+            .profile-header h1{font-size:1.25rem}
+            .form-row{grid-template-columns:1fr}
+        }
+        @media(max-width:480px){
+            .profile-main{padding:1rem}
+            .form-group{margin-bottom:1rem}
+        }
+    </style>
+</head>
+<body class="has-nav">
+
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-logo">
+                <i class="fa-solid fa-shield-halved"></i> Security Web
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link" id="nav-dashboard"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="auth-logs.html" class="nav-link" id="nav-logs"><i class="fa-solid fa-clock-rotate-left"></i> Logs</a>
+                <a href="ai-analysis.html" class="nav-link" id="nav-ai"><i class="fa-solid fa-brain"></i> Analyse IA</a>
+                <a href="profile.html" class="nav-link active" id="nav-profile"><i class="fa-solid fa-user-pen"></i> Profil</a>
+            </div>
+            <div class="nav-user" style="display:flex;align-items:center;gap:1rem;">
+                <span class="nav-email" id="navUserEmail"></span>
+                <button onclick="logout()" class="btn btn-ghost btn-sm" style="color:var(--red);"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="profile-layout">
+        <div class="profile-container">
+            <!-- Sidebar PC -->
+            <aside class="profile-sidebar">
+                <div class="profile-card">
+                    <div class="profile-avatar" id="userAvatar">U</div>
+                    <div class="profile-name" id="sidebarName">Utilisateur</div>
+                    <div class="profile-email" id="sidebarEmail"></div>
+                    <div class="profile-meta">Membre depuis <span id="memberSince">-</span></div>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="dashboard.html" class="sidebar-link"><i class="fa-solid fa-house"></i> Dashboard</a>
+                    <a href="auth-logs.html" class="sidebar-link"><i class="fa-solid fa-clock-rotate-left"></i> Logs</a>
+                    <a href="ai-analysis.html" class="sidebar-link"><i class="fa-solid fa-brain"></i> Analyse IA</a>
+                    <a href="profile.html" class="sidebar-link active"><i class="fa-solid fa-user-pen"></i> Profil</a>
+                    <a href="#" onclick="logout();return false;" class="sidebar-link" style="color:var(--red)"><i class="fa-solid fa-arrow-right-from-bracket"></i> Déconnexion</a>
+                </nav>
+            </aside>
+            
+            <!-- Main Content -->
+            <main class="profile-main">
+                <div class="profile-header">
+                    <h1><i class="fa-solid fa-user-pen"></i> Mon profil</h1>
+                    <p>Modifiez vos informations personnelles et votre mot de passe</p>
+                </div>
+                
+                <div id="profileError" class="alert alert-error" style="display:none;"></div>
+                <div id="profileSuccess" class="alert alert-success" style="display:none;"></div>
+                
+                <form id="profileForm">
+                    <div class="section-title">Informations personnelles</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Prénom</label>
+                            <div class="input-wrap">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" class="form-input" id="firstName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nom</label>
+                            <div class="input-wrap">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" class="form-input" id="lastName" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" class="form-input" id="email" required>
+                        </div>
+                    </div>
+                    
+                    <hr class="divider">
+                    
+                    <div class="section-title">Changer le mot de passe</div>
+                    <div class="form-group">
+                        <label class="form-label">Mot de passe actuel</label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" class="form-input" id="currentPassword" placeholder="Laissez vide pour ne pas changer">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nouveau mot de passe</label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-key"></i>
+                            <input type="password" class="form-input" id="newPassword" placeholder="8 caractères minimum">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit" id="saveBtn">
+                        <span>Enregistrer les modifications</span>
+                        <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                </form>
+            </main>
+        </div>
+    </section>
+    <script>
+        const API_BASE='http://localhost:8000';
+        const token=localStorage.getItem('token');
+        const user=JSON.parse(localStorage.getItem('user')||'{}');
+        if(!token){window.location.href='login.html'}
+
+        // Afficher infos utilisateur
+        const firstName = user.first_name || '';
+        const lastName = user.last_name || '';
+        const fullName = (firstName && lastName) ? `${firstName} ${lastName}` : firstName || lastName || 'Utilisateur';
+        const initials = (firstName?.[0] || '') + (lastName?.[0] || '') || 'U';
+
+        // Navbar
+        document.getElementById('navUserEmail').textContent = user.email || '';
+
+        // Sidebar
+        document.getElementById('userAvatar').textContent = initials.toUpperCase();
+        document.getElementById('sidebarName').textContent = fullName;
+        document.getElementById('sidebarEmail').textContent = user.email || '';
+        document.getElementById('memberSince').textContent = new Date().toLocaleDateString('fr-FR');
+
+        // Fonction de déconnexion
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Initialiser formulaire
+document.getElementById('firstName').value=user.first_name||'';
+        document.getElementById('lastName').value=user.last_name||'';
+        document.getElementById('email').value=user.email||'';
+        document.getElementById('profileForm').addEventListener('submit',async(e)=>{
+            e.preventDefault();
+            const btn=document.getElementById('saveBtn');
+            btn.disabled=true;
+            btn.innerHTML='<span class="spinner"></span> Enregistrement...';
+            const errorDiv=document.getElementById('profileError');
+            const successDiv=document.getElementById('profileSuccess');
+            errorDiv.style.display='none';
+            successDiv.style.display='none';
+            const data={
+                first_name:document.getElementById('firstName').value,
+                last_name:document.getElementById('lastName').value,
+                email:document.getElementById('email').value,
+                current_password:document.getElementById('currentPassword').value||undefined,
+                new_password:document.getElementById('newPassword').value||undefined
+            };
+            try{
+                const response=await fetch(`${API_BASE}/auth/update-profile`,{
+                    method:'POST',
+                    headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
+                    body:JSON.stringify(data)
+                });
+                const result=await response.json();
+                if(response.ok){
+                    successDiv.textContent='Profil mis a jour avec succes!';
+                    successDiv.style.display='block';
+                    user.first_name=data.first_name;
+                    user.last_name=data.last_name;
+                    user.email=data.email;
+                    localStorage.setItem('user',JSON.stringify(user));
+                    document.getElementById('currentPassword').value='';
+                    document.getElementById('newPassword').value='';
+                }else{
+                    errorDiv.textContent=result.detail||'Erreur lors de la mise a jour';
+                    errorDiv.style.display='block';
+                }
+            }catch(error){
+                errorDiv.textContent='Erreur serveur';
+                errorDiv.style.display='block';
+            }
+            btn.disabled=false;
+            btn.innerHTML='<span>Enregistrer</span><i class="fa-solid fa-floppy-disk"></i>';
+        });
+
+        // Deconnexion avec confirmation
+        function confirmLogout() {
+            if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                logout();
+            }
+        }
+    </script>
+    <script src="js/nav.js"></script>
+
+    <nav class="bottom-nav">
+        <div class="bottom-nav-inner">
+            <a href="dashboard.html" class="bottom-nav-item" id="bnav-dashboard"><i class="fa-solid fa-house"></i><span>Accueil</span></a>
+            <a href="auth-logs.html" class="bottom-nav-item" id="bnav-logs"><i class="fa-solid fa-clock-rotate-left"></i><span>Logs</span></a>
+            <a href="ai-analysis.html" class="bottom-nav-item" id="bnav-ai"><i class="fa-solid fa-brain"></i><span>IA</span></a>
+            <a href="profile.html" class="bottom-nav-item active" id="bnav-profile"><i class="fa-solid fa-user"></i><span>Profil</span></a>
+            <a href="#" onclick="confirmLogout();return false;" class="bottom-nav-item" style="color:var(--red)"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Déco</span></a>
+        </div>
+    </nav>
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse IA - Security Web</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .main-content{min-height:100vh;background:var(--bg)}
+        .page-header{padding:2rem 1.5rem;max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem}
+        .header-left{flex:1}
+        .header-right{display:flex;align-items:center;gap:1rem}
+        .page-header h1{font-size:1.75rem;margin-bottom:0.5rem}
+        .page-header p{color:var(--text-soft);font-size:0.95rem}
+        .user-badge{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;background:var(--bg-card);border-radius:var(--radius);font-size:0.85rem;color:var(--text-soft)}
+        .user-badge i{color:var(--blue-600)}
+        .analysis-container{padding:0 1.5rem 2rem;max-width:1200px;margin:0 auto}
+        .analysis-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-bottom:2rem}
+        .analysis-card{background:var(--bg-card);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow-sm)}
+        .analysis-card h3{font-size:1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
+        .analysis-card h3 i{color:var(--blue-600)}
+        .btn-analyze{width:100%;padding:0.75rem;background:var(--blue-600);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;font-weight:600;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:all 0.2s ease}
+        .btn-analyze:hover{background:var(--blue-700)}
+        .btn-analyze:disabled{background:var(--text-xs);cursor:not-allowed}
+        .results-area{padding:0}
+        .empty-state{text-align:center;padding:3rem;color:var(--text-soft)}
+        .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:1rem}
+        .modal.active{display:flex}
+        .modal-content{background:var(--bg-card);border-radius:var(--radius-lg);padding:1.5rem;max-width:500px;width:100%;max-height:80vh;overflow-y:auto}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+        .modal-header h3{font-size:1.1rem;margin:0}
+        .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-soft)}
+        .modal-body{white-space:pre-wrap;line-height:1.6;color:var(--text)}
+        @media(min-width:769px){
+            .modal{display:none}
+        }
+        .empty-state i{font-size:3rem;margin-bottom:1rem;opacity:0.5}
+        .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:#fff;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @media(max-width:768px){
+            .page-header{flex-direction:column;align-items:flex-start}
+            .header-right{width:100%;justify-content:space-between}
+            .analysis-grid{grid-template-columns:1fr}
+        }
+        @media(max-width:600px){
+            .user-badge span{display:none}
+        }
+    </style>
+</head>
+<body class="has-nav">
+
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-logo">
+                <i class="fa-solid fa-shield-halved"></i> Security Web
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link" id="nav-dashboard"><i class="fa-solid fa-house"></i> Dashboard</a>
+                <a href="auth-logs.html" class="nav-link" id="nav-logs"><i class="fa-solid fa-clock-rotate-left"></i> Logs</a>
+                <a href="ai-analysis.html" class="nav-link active" id="nav-ai"><i class="fa-solid fa-brain"></i> Analyse IA</a>
+                <a href="profile.html" class="nav-link" id="nav-profile"><i class="fa-solid fa-user-pen"></i> Profil</a>
+            </div>
+            <div class="nav-user" style="display:flex;align-items:center;gap:1rem;">
+                <span class="nav-email" id="navUserEmail"></span>
+                <button onclick="logout()" class="btn btn-ghost btn-sm" style="color:var(--red);"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div class="header-left">
+                <h1><i class="fa-solid fa-brain" style="color:var(--blue-600);"></i> Analyse IA</h1>
+                <p>Détection d'anomalies et prédictions de menaces par intelligence artificielle</p>
+            </div>
+            <div class="header-right">
+                <div class="user-badge">
+                    <i class="fa-solid fa-user"></i>
+                    <span id="userEmail"></span>
+                </div>
+                <a href="dashboard.html" class="btn btn-ghost"><i class="fa-solid fa-arrow-left"></i> Retour</a>
+                <button onclick="logout()" class="btn btn-ghost" style="color:#dc2626;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Déconnexion</button>
+            </div>
+        </div>
+
+        <div class="analysis-container">
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h3><i class="fa-solid fa-chart-line"></i> Analyser les anomalies</h3>
+                    <p style="color:var(--text-soft);font-size:0.85rem;margin-bottom:1rem;">Détecte les comportements suspects dans vos activités récentes</p>
+                    <button class="btn-analyze" onclick="analyzeAnomalies()" id="btnAnomalies">
+                        <i class="fa-solid fa-magnifying-glass"></i> Analyser
+                    </button>
+                </div>
+                <div class="analysis-card">
+                    <h3><i class="fa-solid fa-crystal-ball"></i> Prédire les menaces</h3>
+                    <p style="color:var(--text-soft);font-size:0.85rem;margin-bottom:1rem;">Prédit les risques potentiels basés sur vos patterns</p>
+                    <button class="btn-analyze" onclick="predictThreats()" id="btnThreats">
+                        <i class="fa-solid fa-shield-virus"></i> Prédire
+                    </button>
+                </div>
+                <div class="analysis-card">
+                    <h3><i class="fa-solid fa-lightbulb"></i> Recommandations</h3>
+                    <p style="color:var(--text-soft);font-size:0.85rem;margin-bottom:1rem;">Suggestions IA pour améliorer votre sécurité</p>
+                    <button class="btn-analyze" onclick="getRecommendations()" id="btnRecommendations">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Obtenir
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-area" id="resultsArea">
+                <div class="empty-state">
+                    <i class="fa-solid fa-robot"></i>
+                    <p>Sélectionnez une analyse pour commencer</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('userEmail').textContent = user.email || '';
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        async function analyzeAnomalies() {
+            await callAIEndpoint('/security/ai/analyze-anomalies', 'btnAnomalies', {
+                analysis_type: 'anomalies',
+                time_range: '24h',
+                filters: {}
+            });
+        }
+
+        async function predictThreats() {
+            await callAIEndpoint('/security/ai/predict-threats', 'btnThreats', {
+                analysis_type: 'threats',
+                time_range: '24h',
+                filters: {}
+            });
+        }
+
+        async function getRecommendations() {
+            await callAIEndpoint('/security/ai/recommendations', 'btnRecommendations', {
+                analysis_type: 'recommendations',
+                time_range: '24h',
+                filters: {}
+            });
+        }
+
+        async function callAIEndpoint(endpoint, btnId, body) {
+            const btn = document.getElementById(btnId);
+            const resultsArea = document.getElementById('resultsArea');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Analyse...';
+            
+            resultsArea.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>Analyse en cours...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+                console.log('Réponse backend:', data);
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Erreur lors de l\'analyse');
+                }
+
+                displayResults(data);
+
+            } catch (error) {
+                resultsArea.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = btnId === 'btnAnomalies' ? '<i class="fa-solid fa-magnifying-glass"></i> Analyser' :
+                        btnId === 'btnThreats' ? '<i class="fa-solid fa-shield-virus"></i> Prédire' :
+                        '<i class="fa-solid fa-wand-magic-sparkles"></i> Obtenir';
+        }
+
+        function displayResults(data) {
+            const resultsArea = document.getElementById('resultsArea');
+            console.log('Données reçues pour affichage:', data);
+            
+            // Afficher directement le texte
+            let text = '';
+            if (typeof data === 'string') {
+                text = data;
+            } else if (data.analysis || data.result || data.message || data.response) {
+                text = data.analysis || data.result || data.message || data.response;
+            } else {
+                text = JSON.stringify(data, null, 2);
+            }
+            
+            resultsArea.innerHTML = `
+                <div style="background:var(--bg-card);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow-sm);margin-top:1.5rem;">
+                    <div style="white-space:pre-wrap;line-height:1.6;color:var(--text);">${text}</div>
+                </div>
+            `;
+            
+            // Sur mobile, afficher dans un modal
+            if (window.innerWidth <= 768) {
+                showModal(text);
+            }
+        }
+
+        function showModal(text) {
+            const modal = document.getElementById('resultModal');
+            const modalBody = document.getElementById('modalBody');
+            modalBody.textContent = text;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('resultModal');
+            modal.classList.remove('active');
+        }
+
+        // Deconnexion avec confirmation
+        function confirmLogout() {
+            if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                logout();
+            }
+        }
+    </script>
+    <script src="js/nav.js"></script>
+    
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Résultat de l'analyse</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="bottom-nav-inner">
+            <a href="dashboard.html" class="bottom-nav-item" id="bnav-dashboard"><i class="fa-solid fa-house"></i><span>Accueil</span></a>
+            <a href="auth-logs.html" class="bottom-nav-item" id="bnav-logs"><i class="fa-solid fa-clock-rotate-left"></i><span>Logs</span></a>
+            <a href="ai-analysis.html" class="bottom-nav-item active" id="bnav-ai"><i class="fa-solid fa-brain"></i><span>IA</span></a>
+            <a href="profile.html" class="bottom-nav-item" id="bnav-profile"><i class="fa-solid fa-user"></i><span>Profil</span></a>
+            <a href="#" onclick="confirmLogout();return false;" class="bottom-nav-item" style="color:var(--red)"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Déco</span></a>
+        </div>
+    </nav>
+
+</body>
+</html>
