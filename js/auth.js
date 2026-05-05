@@ -161,7 +161,8 @@ async function login(email, password) {
             id: data.user_id,
             email: data.email,
             first_name: data.first_name,
-            last_name: data.last_name
+            last_name: data.last_name,
+            group: data.group || 'Utilisateur'
         }));
         
         showSuccess('Connexion reussie !');

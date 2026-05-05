@@ -7,7 +7,7 @@ const API_BASE = 'https://camelis-dg-back.onrender.com';
 // Fonction pour obtenir les informations utilisateur
 function getUserInfo() {
     const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const user = normalizeUser(JSON.parse(localStorage.getItem('user') || '{}'));
     
     if (!token) {
         window.location.href = 'login.html';
@@ -17,14 +17,64 @@ function getUserInfo() {
     return { token, user };
 }
 
+function normalizeUser(user = {}) {
+    return {
+        ...user,
+        email: user.email || '',
+        first_name: user.first_name || '',
+        last_name: user.last_name || '',
+        group: user.group || 'Utilisateur',
+        created_at: user.created_at || '',
+        is_verified: Boolean(user.is_verified)
+    };
+}
+
+function getFullName(user = {}) {
+    const normalized = normalizeUser(user);
+    return (normalized.first_name && normalized.last_name)
+        ? `${normalized.first_name} ${normalized.last_name}`
+        : normalized.first_name || normalized.last_name || 'Utilisateur';
+}
+
+function getUserInitials(user = {}) {
+    const normalized = normalizeUser(user);
+    return ((normalized.first_name[0] || '') + (normalized.last_name[0] || '')).toUpperCase() || 'U';
+}
+
+async function hydrateUserProfile() {
+    const info = getUserInfo();
+    if (!info) return null;
+
+    try {
+        const response = await fetch(`${API_BASE}/auth/my-security?include_logs=false&logs_limit=0`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${info.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) return info;
+
+        const data = await response.json();
+        if (data.profile) {
+            const merged = normalizeUser({ ...info.user, ...data.profile });
+            localStorage.setItem('user', JSON.stringify(merged));
+            return { token: info.token, user: merged, profile: data.profile, security: data.security, activity: data.activity };
+        }
+    } catch {
+        return info;
+    }
+
+    return info;
+}
+
 // Fonction pour afficher le nom complet de l'utilisateur
 function displayUserName() {
     const { user } = getUserInfo();
     if (!user) return;
     
-    const firstName = user.first_name || '';
-    const lastName = user.last_name || '';
-    const fullName = (firstName && lastName) ? `${firstName} ${lastName}` : firstName || lastName || 'Utilisateur';
+    const fullName = getFullName(user);
     
     const userNameElements = document.querySelectorAll('#userName');
     userNameElements.forEach(element => {
@@ -43,12 +93,23 @@ function displayUserEmail() {
     });
 }
 
+function displayUserGroup() {
+    const { user } = getUserInfo();
+    if (!user) return;
+
+    const userGroupElements = document.querySelectorAll('#userGroup, #sidebarGroup');
+    userGroupElements.forEach(element => {
+        element.textContent = user.group || 'Utilisateur';
+    });
+}
+
 // Fonction pour calculer le score de sécurité
 function calculateSecurityScore(user) {
+    const normalized = normalizeUser(user);
     let score = 50; // Score de base
     
-    if (user.email && user.email.includes('@')) score += 25;
-    if (user.first_name && user.last_name) score += 25;
+    if (normalized.email && normalized.email.includes('@')) score += 25;
+    if (normalized.first_name && normalized.last_name) score += 25;
     
     return score;
 }
@@ -76,6 +137,7 @@ function logout() {
 function initializePage() {
     displayUserName();
     displayUserEmail();
+    displayUserGroup();
     displaySecurityScore();
 }
 
