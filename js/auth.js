@@ -245,8 +245,4 @@ function showSuccess(message) {
     setTimeout(() => successDiv.remove(), 5000);
 }
 
-// Check si deja connecte
-const token = localStorage.getItem('token');
-if (token && window.location.pathname.includes('login')) {
-    window.location.href = 'dashboard.html';
-}
+// Redirection automatique désactivée - l'utilisateur peut accéder à la page de connexion
